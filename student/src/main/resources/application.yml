@@ -1,0 +1,70 @@
+# application.yml
+spring:
+  application:
+    name: student-management-api
+  
+  # Database Configuration
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/studentdb}
+    username: ${DATABASE_USERNAME:student_user}
+    password: ${DATABASE_PASSWORD:student_pass}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      pool-name: StudentPool
+      maximum-pool-size: ${DATABASE_POOL_SIZE:20}
+      minimum-idle: ${DATABASE_MIN_IDLE:5}
+      connection-timeout: ${DATABASE_CONNECTION_TIMEOUT:30000}
+  
+  # JPA Configuration
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: ${SHOW_SQL:false}
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    open-in-view: false
+  
+  # Flyway Configuration
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/studentdb}
+    user: ${DATABASE_USERNAME:student_user}
+    password: ${DATABASE_PASSWORD:student_pass}
+
+# Server Configuration
+server:
+  port: ${SERVER_PORT:8080}
+  error:
+    include-message: always
+    include-binding-errors: always
+
+# Logging Configuration
+logging:
+  level:
+    com.student.student: ${LOG_LEVEL:INFO}
+    org.springframework.web: ${WEB_LOG_LEVEL:WARN}
+    org.hibernate.SQL: ${SQL_LOG_LEVEL:WARN}
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# OpenAPI/Swagger Configuration
+springdoc:
+  api-docs:
+    enabled: ${API_DOCS_ENABLED:true}
+    path: /api-docs
+  swagger-ui:
+    enabled: ${SWAGGER_UI_ENABLED:true}
+    path: /swagger-ui.html
+    try-it-out-enabled: true
+    operations-sorter: method
+
+# Application Information
+info:
+  app:
+    name: ${spring.application.name}
+    description: RESTful API for Student Management System
+    version: ${APP_VERSION:1.0.0}

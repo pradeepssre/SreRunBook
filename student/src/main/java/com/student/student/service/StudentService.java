@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 public class StudentService {
-    private StudentRepository studentRepository;
+    private final StudentRepository studentRepository;
 
     public StudentResponse createStudent(StudentRequest request)
     {
@@ -106,37 +106,36 @@ public class StudentService {
                         .orElseThrow(()-> new StudentNotFoundException(
                             String.format("Student with id %s not found",studentId)
                         )); 
-        if (!student.getEmail().equals(request.email()))
+        if(student.getEmail().equals(request.email()))
         {
+            student.setFirstName(request.firstName());
+            student.setLastName(request.lastName());
+            student.setDateOfBirth(request.dateOfBirth());
+            student = studentRepository.save(student);
+            log.info(String.format("Updated other details except email for student with id %s",studentId));
+            return new StudentResponse(student.getStudentId(),
+            student.getRollNumber(),student.getFirstName(),
+            student.getLastName(),student.getEmail(),student.getDateOfBirth()
+            ,student.getCreatedAt(),student.getUpdatedAt());
+        } else {
             Boolean exists = studentRepository.existsByEmail(request.email());
             if (exists)
             {
-                log.info("Updating other details but email already exists");
-                student.setFirstName(request.firstName());
-                student.setLastName(request.lastName());
-                student.setDateOfBirth(request.dateOfBirth());
-                student = studentRepository.save(student);
-                
-                
-            } else{
-                log.info("Updating all details including email");
-                student.setFirstName(request.firstName());
-                student.setLastName(request.lastName());
-                student.setDateOfBirth(request.dateOfBirth());
-                student.setEmail(request.email());
-                student = studentRepository.save(student);
-                
-            }
-            
-        
+                log.error(String.format("Email : {} already exists", request.email()));
+                throw new EmailAlreadyExistsException(String.format("Email %s already exists", request.email())) ;
+            } 
+            student.setFirstName(request.firstName());
+            student.setLastName(request.lastName());
+            student.setDateOfBirth(request.dateOfBirth());
+            student.setEmail(request.email());
+            student = studentRepository.save(student);
+            log.info(String.format("Updated all details including email for student with id %s",studentId));
+            return new StudentResponse(student.getStudentId(),
+            student.getRollNumber(),student.getFirstName(),
+            student.getLastName(),student.getEmail(),student.getDateOfBirth()
+            ,student.getCreatedAt(),student.getUpdatedAt());
         }
         
-    return new StudentResponse(student.getStudentId(),
-                student.getRollNumber(),student.getFirstName(),
-                student.getLastName(),student.getEmail(),student.getDateOfBirth()
-                ,student.getCreatedAt(),student.getUpdatedAt());
-
-
 }
 
 public List<StudentResponse> getAllStudents()

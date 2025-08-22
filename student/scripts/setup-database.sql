@@ -36,30 +36,23 @@ BEGIN
 END $$;
 
 -- Create database only if it doesn't exist
-SELECT 'Database check...' as status;
 DO $$
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_database WHERE datname = 'studentdb') THEN
-        -- Note: CREATE DATABASE cannot be inside a transaction block
-        -- This will be handled by conditional execution below
-        RAISE NOTICE 'Database studentdb does not exist, will create it';
+        RAISE NOTICE 'Database studentdb does not exist';
+        RAISE NOTICE 'Please run: CREATE DATABASE studentdb WITH OWNER = student_user ENCODING = ''UTF8'';';
     ELSE
         RAISE NOTICE 'Database studentdb already exists, skipping creation';
     END IF;
 END $$;
 
--- Conditional database creation (outside transaction block)
-\gset
-SELECT CASE 
-    WHEN EXISTS (SELECT 1 FROM pg_database WHERE datname = 'studentdb') 
-    THEN 'Database already exists' 
-    ELSE 'CREATE DATABASE studentdb WITH OWNER = student_user ENCODING = ''UTF8'' LC_COLLATE = ''en_US.UTF-8'' LC_CTYPE = ''en_US.UTF-8'' TEMPLATE = template0;' 
-END as create_db_command \gset
+-- Alternative approach: Use a more reliable conditional database creation
+SELECT 'CREATE DATABASE ' || quote_ident('studentdb') || 
+       ' WITH OWNER = ' || quote_ident('student_user') || 
+       ' ENCODING = ''UTF8'' LC_COLLATE = ''en_US.UTF-8'' LC_CTYPE = ''en_US.UTF-8'' TEMPLATE = template0'
+WHERE NOT EXISTS (SELECT 1 FROM pg_database WHERE datname = 'studentdb') \gexec
 
--- Execute database creation if needed
-:create_db_command
-
--- Grant database privileges
+-- Grant database privileges (safe even if database already exists)
 GRANT ALL PRIVILEGES ON DATABASE studentdb TO student_user;
 GRANT CONNECT ON DATABASE studentdb TO student_user;
 
