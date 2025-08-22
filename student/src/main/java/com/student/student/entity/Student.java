@@ -38,7 +38,7 @@ public class Student {
     @Column(name = "student_id")
     private UUID studentId;
 
-    @Column(name = "roll_number", nullable = false, unique = true, updatable = false)
+    @Column(name = "roll_number", nullable = false, unique = true, updatable = false, insertable = false)
     private Integer rollNumber;
 
     @Column(name = "first_name", nullable = false, length = 50)
