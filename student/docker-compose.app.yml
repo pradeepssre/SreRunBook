@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  student-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: student-api-app-only
+    environment:
+      SPRING_PROFILES_ACTIVE: dockerapp
+      # Points to your local database
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${DB_NAME}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      JAVA_OPTS: "-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0"
+    
+    network_mode: host
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/healthcheck"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s

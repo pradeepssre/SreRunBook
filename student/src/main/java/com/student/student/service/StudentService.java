@@ -39,13 +39,13 @@ public class StudentService {
                         .email(request.email())
                         .dateOfBirth(request.dateOfBirth())
                         .build();
-        student = studentRepository.save(student);
-        log.info(String.format("Student created with id : {} and Roll Number {}",student.getStudentId(),student.getRollNumber()));
+        Student savedStudent = studentRepository.save(student);
+        log.info(String.format("Student created with id : {} and Roll Number {}",savedStudent.getStudentId(),savedStudent.getRollNumber()));
 
-        return new StudentResponse(student.getStudentId(),
-        student.getRollNumber(),student.getFirstName(),
-        student.getLastName(),student.getEmail(),student.getDateOfBirth()
-        ,student.getCreatedAt(),student.getUpdatedAt());   
+        return new StudentResponse(savedStudent.getStudentId(),
+        savedStudent.getRollNumber(),savedStudent.getFirstName(),
+        savedStudent.getLastName(),savedStudent.getEmail(),savedStudent.getDateOfBirth()
+        ,savedStudent.getCreatedAt(),savedStudent.getUpdatedAt());   
 
 
     }

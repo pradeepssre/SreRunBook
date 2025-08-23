@@ -14,7 +14,7 @@
 
 -- Create user only if it doesn't exist
 DO $$
-BEGIN
+BEGIN5432
     IF NOT EXISTS (SELECT 1 FROM pg_user WHERE usename = 'student_user') THEN
         CREATE USER student_user WITH 
             PASSWORD 'student_pass'

@@ -5,9 +5,9 @@ spring:
   
   # Database Configuration
   datasource:
-    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/studentdb}
-    username: ${DATABASE_USERNAME:student_user}
-    password: ${DATABASE_PASSWORD:student_pass}
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
     hikari:
       pool-name: StudentPool
@@ -31,9 +31,9 @@ spring:
     enabled: true
     locations: classpath:db/migration
     baseline-on-migrate: true
-    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/studentdb}
-    user: ${DATABASE_USERNAME:student_user}
-    password: ${DATABASE_PASSWORD:student_pass}
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+    user: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
 
 # Server Configuration
 server:
