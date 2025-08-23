@@ -122,7 +122,11 @@ run-profile:
 # Database migrations
 db-migrate:
 	@echo "$(GREEN)Running database migrations...$(NC)"
-	$(MAVEN) flyway:migrate
+	$(MAVEN) flyway:migrate \
+		-Dflyway.url=$(DATABASE_URL) \
+		-Dflyway.user=$(DATABASE_USERNAME) \
+		-Dflyway.password=$(DATABASE_PASSWORD) \
+		-Dflyway.locations=filesystem:src/main/resources/db/migration
 	@echo "$(GREEN)✅ Database migrations complete!$(NC)"
 
 # Check migration status
