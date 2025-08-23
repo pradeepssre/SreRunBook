@@ -16,7 +16,7 @@ COMPOSE_PROD = docker-compose.prod.yml
 
 #environment  variables files
 ENV_APP_ONLY = .env.docker-app
-ENV_STACK = .env.docker-app
+ENV_STACK = .env.docker-stack
 ENV_PROD = .env.docker-app
 
 # Default Java and Maven commands
@@ -34,7 +34,7 @@ RED = \033[0;31m
 CYAN = \033[0;36m
 NC = \033[0m # No Color
 
-.PHONY: help clean build test run run-prod package install lint format docs swagger-export postman-generate db-migrate db-status health-check stop docker-*
+.PHONY: help clean build test run run-prod package install lint format docs swagger-export postman-generate db-migrate db-status health-check stop docker-* docker-stack docker-stack-build docker-stack-up docker-stack-down docker-stack-logs docker-stack-clean
 
 # Default target
 all: clean build test
@@ -271,6 +271,18 @@ docker-stack: docker-build
 	@echo "$(CYAN)📚 Swagger: http://localhost:8080/swagger-ui.html$(NC)"
 	@echo "$(CYAN)🗄️  pgAdmin: http://localhost:5050$(NC)"
 	@echo "$(YELLOW)💡 Login: admin@student.local / admin123$(NC)"
+
+docker-stack-down:
+	@echo "$(YELLOW)Stopping full Docker stack...$(NC)"
+	docker-compose --env-file $(ENV_STACK) -f $(COMPOSE_STACK) down
+
+docker-stack-logs:
+	@echo "$(CYAN)Showing Docker stack logs...$(NC)"
+	docker-compose --env-file $(ENV_STACK) -f $(COMPOSE_STACK) logs -f
+
+docker-stack-clean:
+	@echo "$(RED)Cleaning Docker stack...$(NC)"
+	docker-compose --env-file $(ENV_STACK) -f $(COMPOSE_STACK) down -v
 
 # Docker Scenario 3: Production app + External database
 docker-prod: docker-build
